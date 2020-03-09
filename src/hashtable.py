@@ -54,8 +54,9 @@ class HashTable:
         hashed_index = self._hash_mod(key)
         # create a new node
         new_node = LinkedPair(key, value)
-        # attach a new node
+        # attach a node.next to its key
         new_node.next = self.storage[hashed_index]
+        # attach the key to its node
         self.storage[hashed_index] = new_node
 
     def remove(self, key):
@@ -66,7 +67,32 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # The goal is to find the previous node and make the prev.next equal to the curr.next to change the pointers for removal.
+
+        # if key is not in storage return an error
+        hashed_key = self._hash_mod(key)
+        if self.storage[hashed_key] is None:
+            return f"This key: {key} does not exist!"
+        # if key is in storage get the current value of key and remove it
+        # curr is our node to be deleted
+        curr = self.storage[hashed_key]
+        # set variable previous to none
+        prev = None
+        # loop while the key of our current node is equal to the key given as an argument
+        while curr.key == key:
+            # check if prev has a value
+            if prev is not None:
+                # if prev has a value then we need to iterate that value to the current nodes next
+                prev.next = curr.next
+            # if prev has no value
+            else:
+                # Then our initial key and value is equal to curr's next, which happens when we delete the first node.
+                self.storage[hashed_key] = curr.next
+            return True
+        # give previous a value
+        prev = curr
+        # iterate curr forward so we can loop through the whole list
+        curr = curr.next
 
     def retrieve(self, key):
         '''
