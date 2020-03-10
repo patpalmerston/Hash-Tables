@@ -10,7 +10,7 @@ class LinkedPair:
         self.next = None
 
     def __repr__(self):
-        return 'repr()'
+        return f'key: {self.key}, value: {self.value}'
 
     def __str__(self):
         return f'key: {self.key}, value: {self.value}'
@@ -133,27 +133,19 @@ class HashTable:
         # double cpacity
         self.capacity = self.capacity * 2
         # new Hashtable
-        new_storage = HashTable(self.capacity)
-        count = 0
+        new_hash_table = HashTable(self.capacity)
         # search for all nodes in storage
         for node in self.storage:
             # while there are nodes
             while node:
-                count += 1
-                print('node', node, count)
                 # insert node key and value into new storage
-                new_storage.insert(node.key, node.value)
+                new_hash_table.insert(node.key, node.value)
                 # continue moving through all the nodes
                 node = node.next
         # current storage equals the new HT
-        self.storage = new_storage
-
-        # old_storage = self.storage
-        # self.capacity = self.capacity * 2
-        # self.storage = [None] * self.capacity
-
-        # for bucket_item in old_storage:
-        #     self.insert(old_storage[bucket_item], bucket_item.value)
+        print('storage', self.storage, new_hash_table.storage)
+        # self.storage will be equal to the new HT's storage
+        self.storage = new_hash_table.storage
 
 
 if __name__ == "__main__":
