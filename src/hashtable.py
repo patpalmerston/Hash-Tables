@@ -1,21 +1,30 @@
 # '''
 # Linked List hash table key/value pair
 # '''
+
+
 class LinkedPair:
     def __init__(self, key, value):
         self.key = key
         self.value = value
         self.next = None
 
+    def __repr__(self):
+        return f'key: {self.key}, value: {self.value}'
+
+    def __str__(self):
+        return f'key: {self.key}, value: {self.value}'
+
+
 class HashTable:
     '''
     A hash table that with `capacity` buckets
     that accepts string keys
     '''
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
-
 
     def _hash(self, key):
         '''
@@ -23,8 +32,8 @@ class HashTable:
 
         You may replace the Python hash with DJB2 as a stretch goal.
         '''
-        return hash(key)
 
+        return hash(key)
 
     def _hash_djb2(self, key):
         '''
@@ -34,7 +43,6 @@ class HashTable:
         '''
         pass
 
-
     def _hash_mod(self, key):
         '''
         Take an arbitrary key and return a valid integer index
@@ -42,18 +50,20 @@ class HashTable:
         '''
         return self._hash(key) % self.capacity
 
-
     def insert(self, key, value):
         '''
         Store the value with the given key.
-
         Hash collisions should be handled with Linked List Chaining.
-
         Fill this in.
         '''
-        pass
-
-
+        # create a hashed index
+        hashed_index = self._hash_mod(key)
+        # create a new node
+        new_node = LinkedPair(key, value)
+        # attach a node.next to its key
+        new_node.next = self.storage[hashed_index]
+        # attach the key to its node
+        self.storage[hashed_index] = new_node
 
     def remove(self, key):
         '''
@@ -63,8 +73,32 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
+        # The goal is to find the previous node and make the prev.next equal to the curr.next to change the pointers for removal.
 
+        # if key is not in storage return an error
+        hashed_key = self._hash_mod(key)
+        if self.storage[hashed_key] is None:
+            return f"This key: {key} does not exist!"
+        # if key is in storage get the current value of key and remove it
+        # curr is our node to be deleted
+        curr = self.storage[hashed_key]
+        # set variable previous to none
+        prev = None
+        # loop while the key of our current node is equal to the key given as an argument
+        while curr.key == key:
+            # check if prev has a value
+            if prev is not None:
+                # if prev has a value then we need to iterate that value to the current nodes next
+                prev.next = curr.next
+            # if prev has no value
+            else:
+                # Then our initial key and value is equal to curr's next, which happens when we delete the first node.
+                self.storage[hashed_key] = curr.next
+            return True
+        # give previous a value
+        prev = curr
+        # iterate curr forward so we can loop through the whole list
+        curr = curr.next
 
     def retrieve(self, key):
         '''
@@ -74,8 +108,20 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # hash the key to find it in the table
+        current_key = self._hash_mod(key)
+        # grab the index with that key in table
+        current_value = self.storage[current_key]
+        # loop while it is true there is a current_value from that key
+        while current_value:
+            # see if the current values current key matches the key given
+            if current_value.key == key:
+                # return that node
+                return current_value.value
+        # iterate through the tables keys to try and find key
+            current_value = current_value.next
+        # return none if nothing found
+        return None
 
     def resize(self):
         '''
@@ -84,8 +130,22 @@ class HashTable:
 
         Fill this in.
         '''
-        pass
-
+        # double cpacity
+        self.capacity = self.capacity * 2
+        # new Hashtable
+        new_hash_table = HashTable(self.capacity)
+        # search for all nodes in storage
+        for node in self.storage:
+            # while there are nodes
+            while node:
+                # insert node key and value into new storage
+                new_hash_table.insert(node.key, node.value)
+                # continue moving through all the nodes
+                node = node.next
+        # current storage equals the new HT
+        print('storage', self.storage, new_hash_table.storage)
+        # self.storage will be equal to the new HT's storage
+        self.storage = new_hash_table.storage
 
 
 if __name__ == "__main__":
